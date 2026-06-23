@@ -1,0 +1,3 @@
+CREATE DATABASE mydb;
+CREATE DATABASE blogdb;
+CREATE DATABASE notificationdb;
