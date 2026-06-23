@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-migration
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: auth-migration
+          image: drizzy0606/auth-service:b5611a6063f68db6bd526991be9fcecd7c4ee6f0
+
+          command:
+            - node
+            - migrate.js
+
+          envFrom:
+            - configMapRef:
+                name: blog-service-config
+            - secretRef:
+                name: services-secret
+
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: myuser
+            - name: DB_PASSWORD
+              value: mypassword
+            - name: DB_NAME
+              value: mydb

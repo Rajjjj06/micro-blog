@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: api-gateway
+          image: drizzy0606/api-gateway:b5611a6063f68db6bd526991be9fcecd7c4ee6f0
+          ports:
+            - containerPort: 4005
+          envFrom:
+            - configMapRef:
+                name: blog-service-config
+            - secretRef:
+                name: services-secret
+          env:
+            - name: PORT
+              value: "4005"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

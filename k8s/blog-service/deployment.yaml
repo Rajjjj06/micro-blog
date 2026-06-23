@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-service-deployment
+  labels:
+    app: blog-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blog-service
+  template:
+    metadata:
+      labels:
+        app: blog-service
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: blog-service
+          image: drizzy0606/blog-service:b5611a6063f68db6bd526991be9fcecd7c4ee6f0
+          ports:
+            - containerPort: 4001
+          env:
+            - name: PORT
+              value: "4001"
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "myuser"
+            - name: DB_PASSWORD
+              value: "mypassword"
+            - name: DB_NAME
+              value: "blogdb"
+            - name: DATABASE_URL
+              value: "postgresql://myuser:mypassword@postgres:5432/blogdb"
+
+          envFrom:
+            - configMapRef:
+                name: blog-service-config
+            - secretRef:
+                name: services-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
